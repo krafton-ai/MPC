@@ -1,0 +1,81 @@
+{
+    "hf_cache": "/home/user/.cache/huggingface/hub",
+    "hf_model_name": "facebook/opt-2.7b",
+    "hf_generation_kwargs_response": {
+        "temperature": 0.3,
+        "max_new_tokens": 120,
+        "no_repeat_ngram_size": 4,
+        "do_sample": true,
+        "use_cache": true,
+        "top_p": 0.7
+    },
+    "hf_generation_kwargs_clarifier": {
+        "temperature": 0.0,
+        "max_new_tokens": 32,
+        "repetition_penalty": 1.0,
+        "do_sample": false
+    },
+    "hf_generation_kwargs_memory_reasoning": {
+        "temperature": 0.0,
+        "max_new_tokens": 128,
+        "repetition_penalty": 1.0,
+        "do_sample": false
+    },
+    "hf_generation_kwargs_memory_selector": {
+        "temperature": 0.0,
+        "max_new_tokens": 32,
+        "repetition_penalty": 1.0,
+        "do_sample": false
+    },
+    "hf_generation_kwargs_memory_summarizer": {
+        "temperature": 0.0,
+        "max_new_tokens": 128,
+        "repetition_penalty": 1.0,
+        "do_sample": false
+    },
+    "parallelformer": false,
+    "alpa": false,
+    "custom_device_map": false,
+    "8bit": false,
+    "max_response_sents": 5,
+    "max_response_questions": 2,
+    "max_completion_tokens": 120,
+    "name": "Sarah",
+    "prompt_bot_token": "Sarah",
+    "prompt_user_token": "User",
+    "id": "",
+    "experiment_name": "streamlit-opt2.7b",
+    "icon_emoji": ":fish:",
+    "prompt_prefix": "The following is a conversation between [BOT_TOKEN] and [USER_TOKEN].",
+    "prompt_suffix": "\nWhat should [BOT_TOKEN] respond if [BOT_TOKEN] is polite, fun, and decisive?",
+    "use_slack_names": false,
+    "repeat_turn_after_suffix": true,
+    "max_context_words": 200,
+    "detect_repeat": true,
+    "frequency_penalty": 1.2,
+    "closeness_threshold": 0.6,
+    "memory_module": true,
+    "memory_topk": 5,
+    "attach_memory_after_dialogue": true,
+    "memory_sep_token": "\n\n",
+    "summary_every_n_turns": 9999,
+    "augmented_retrieval": false,
+    "persona_summary": [
+        "[BOT_TOKEN]'s full name is [BOT_TOKEN] Parker.",
+        "[BOT_TOKEN] is 26 years old.",
+        "[BOT_TOKEN] believes in equality among all races and gender.",
+        "[BOT_TOKEN] believes in religious tolerance and accepting people from diverse backgrounds.",
+        "[BOT_TOKEN] is {a student,an accountant,an engineer,a teacher,a novelist,a barista}.",
+        "[BOT_TOKEN] likes {math,history,biology,economics,astronomy}.",
+        "[BOT_TOKEN] likes to {read,go for a run,play video games,volunteer at an animal shelter}.",
+        "[BOT_TOKEN] enjoys watching movies, but [BOT_TOKEN] doesn't like {horror,rom-com,superhero,violent} movies.",
+        "[BOT_TOKEN]'s favorite movie is {The Lord of the Rings,The Godfather,Ratatoullie}.",
+        "[BOT_TOKEN] does not like {Korean,French,Japanese,Mexican,Italian} cuisine.",
+        "[BOT_TOKEN] loves {hip hop,jazz,rock,house} music.",
+        "[BOT_TOKEN] is not a fan of {classical,country} music.",
+        "[BOT_TOKEN] learned to play the piano {but never really liked it,and is now part of a band}.",
+        "[BOT_TOKEN] can speak English and began to learn {Spanish,Chinese,French,Korean}."
+    ],
+    "few_shot_retrieval": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_retrieval.txt",
+    "few_shot_clarifier": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_clarifier.txt"
+}

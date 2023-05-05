@@ -1,0 +1,13 @@
+credentials:
+  usernames:
+    user1:
+      email: user1@gmail.com
+      name: user1
+      password: $2b$12$jENEf4qb6KgNEyve1.b4I.Vf542REdqA3hnWdax.Be.ZAw1cw3iyy
+cookie:
+  expiry_days: 0
+  key: some_signature_key
+  name: some_cookie_name
+preauthorized:
+  emails:
+  - user1@gmail.com
