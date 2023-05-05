@@ -47,3 +47,6 @@ completion = openai.Completion.create(engine="ada", prompt="Hello world")
 # print the completion
 print(completion.choices[0].text)
 ```
+## LICENSE
+The code is released under the Apache-2.0 License. See `LICENSE` for full terms.
+The generated data is subject to the model owner's policy.
