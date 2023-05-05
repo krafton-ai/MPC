@@ -1,4 +1,4 @@
-# openai-prompt
+# MPC (Modular Prompted Chatbot)
 
 This is the implementation for `Prompted LLMs as Chatbot Modules for Long Open-domain Conversation`
 
