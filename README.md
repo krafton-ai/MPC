@@ -1,6 +1,6 @@
 # MPC (Modular Prompted Chatbot)
 
-This is the implementation for `Prompted LLMs as Chatbot Modules for Long Open-domain Conversation`
+This is the implementation for [Prompted LLMs as Chatbot Modules for Long Open-domain Conversation]() (Arxiv link will be available soon)
 
 ## Getting started
 
@@ -50,3 +50,17 @@ print(completion.choices[0].text)
 ## LICENSE
 The code is released under the Apache-2.0 License. See `LICENSE` for full terms.
 The generated data is subject to the model owner's policy.
+
+## Citation
+```
+@article{lee2023prompted,
+  title={Prompted LLMs as Chatbot Modules for Long Open-domain Conversation},
+  author={Lee, Gibbeum and 
+  Hartmann, Volker and 
+  Park, Jongho and 
+  Papailiopoulos, Dimitris and
+  Kangwook, Lee},
+  booktitle={Findings of the Association for Computational Linguistics: ACL 2023},
+  year={2023}
+}
+```
