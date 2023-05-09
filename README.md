@@ -1,6 +1,6 @@
 # MPC (Modular Prompted Chatbot)
 
-This is the implementation for [Prompted LLMs as Chatbot Modules for Long Open-domain Conversation]() (Arxiv link will be available soon)
+This is the implementation for [Prompted LLMs as Chatbot Modules for Long Open-domain Conversation](https://arxiv.org/abs/2305.04533)
 
 ## Getting started
 
@@ -53,7 +53,7 @@ The generated data is subject to the model owner's policy.
 
 ## Citation
 [Prompted LLMs as Chatbot Modules for Long Open-domain Conversation]()  
-[[PDF](MPC_ver4.pdf)] [[Arxiv]()] (Arxiv link will be available soon.)
+[[PDF](MPC_ver4.pdf)] [[Arxiv](https://arxiv.org/abs/2305.04533)]
 ```bibtex
 @inproceedings{lee2023prompted,
   title={Prompted LLMs as Chatbot Modules for Long Open-domain Conversation},
