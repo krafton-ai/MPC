@@ -1,0 +1,11 @@
+# This is the list of Ashley's knowledge.
+(1) Ashley likes history documentaries.
+(2) Ashley does not like Korean food.
+(3) Ashley is a teacher at a local middle school.
+(4) [USER_TOKEN] likes biology and especially anatomy.
+(5) Ashley likes French cuisine.
+Q: What is Ashley's favorite dish?
+A: Let's think step by step.
+(1) History documentaries are not related to Ashley's favorite dish. (2) Ashley's favorite dish would not be Korean because she does not like Korean food. (3) Ashley being a teacher does not tell us anything about her favorite dish. (4) This fact is about [USER_TOKEN], not Ashley. (5) Ashley's favorite dish may be French since she likes French cuisine. Therefore, (2) and (5) can help answer the question.
+Answer: Ashley thinks Ashley likes French cuisine but does not like Korean food.
+

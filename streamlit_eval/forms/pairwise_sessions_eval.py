@@ -72,6 +72,10 @@ if st.session_state['start_page']:
     else:
         st.error('Username/password is incorrect')
 elif st.session_state['finish']:
+    components.html(
+                    """<script>window.parent.document.querySelector('section.main').scrollTo(0, 0);</script>""",
+                    height=0
+                    )
     utils.upload_session(st.session_state, SESSION_DIR, FOLDER)
     st.markdown('## Finish!')
     st.text('Copy and paste the reward token below and get the reward!')   
@@ -79,7 +83,7 @@ elif st.session_state['finish']:
 
     st.markdown("### Chat History")
     utils.show_chat_sessions(st.session_state)
-    st.text("Scroll back to the top!")
+    st.text("Scroll back to the top to get the reward token!")
     # st.experimental_rerun()
 else:
     utils.show_chat_sessions(st.session_state)
@@ -132,8 +136,20 @@ else:
         with st.form('eval', clear_on_submit=True):
             st.markdown(f"**Required:** Continue conversation for {n_turns} turns. (Turns completed: {len(st.session_state['pair/preference'])})")                
             st.markdown("**Note:** Every turn, responses A and B are mixed up so they do not correspond to the same chatbots as before. Use the **Tie** option sparingly.")
-            st.markdown(":bulb: You can see the persona list on the left sidebar as well. (scroll down the sidebar)")
+            st.markdown(":bulb: You can find the keyword to check whether it has been mentioned in the dialogue. (ctrl+F or cmd+F)")
             st.markdown("#### Compare response A vs B")
+
+            st.markdown("##### Consistency")
+            st.markdown("If you had to say one of these speakers is more consistent with the facts from the conversation history, who would you say is more consistent?")
+            consist_A = st.checkbox("A is more consistent with the facts from the conversation history.")
+            consist_T = st.checkbox("Tie: both are similarly consistent.")
+            consist_B = st.checkbox("B is more consistent with the facts from the conversation history.")
+            if consist_A:
+                consistency = "A"
+            elif consist_T:
+                consistency = "Tie"
+            elif consist_B:
+                consistency = "B"
 
             st.markdown("##### Sensible")
             st.markdown("Which response makes more sense?")
@@ -158,19 +174,7 @@ else:
                 interestingness = "Tie"
             elif interest_B:
                 interestingness = "B"
-
-            st.markdown("##### Persona consistency")
-            st.markdown("If you had to say one of these speakers is more consistent with the facts from the conversation history \
-                and one is not, who would you say is more consistent?")
-            consist_A = st.checkbox("A is more consistent with the facts from the conversation history.")
-            consist_T = st.checkbox("Tie: both are similarly consistent.")
-            consist_B = st.checkbox("B is more consistent with the facts from the conversation history.")
-            if consist_A:
-                consistency = "A"
-            elif consist_T:
-                consistency = "Tie"
-            elif consist_B:
-                consistency = "B"
+            
 
             st.markdown("##### Preference")
             st.markdown("Based on the current response, who would you prefer to talk to for a long \

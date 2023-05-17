@@ -26,8 +26,10 @@ authenticator = stauth.Authenticate(
 )
 
 # load config path for both models
-m1_model_type = "gpt"
-m2_model_type = "alt_gpt"  # alt_gpt / opt / bb3
+# bb3 config does not include persona info, so we choose the other model's config
+# Note: if one model is `opt` it should be assigned to `m2_model_type` due to how `init_pair_persona` initializes the config
+m1_model_type = "alt_opt" # opt-66b
+m2_model_type = "opt" # opt-30b
 m1_config_path = get_persona_config_path(m1_model_type)
 m2_config_path = get_persona_config_path(m2_model_type)
 
@@ -60,16 +62,6 @@ if st.session_state['start_page']:
         if submitted and user_input:
             st.session_state['worker_id'] = user_input
             st.session_state['start_page'] = False
-            # (1) clone a new agent for each user to separate history/memory
-            # (2) initialize memory with persona facts
-            if m1_model_type == 'bb3' and 'm1_model' not in st.session_state:
-                print(f"Creating new m1 model agent for worker_id: {user_input}")
-                st.session_state['m1_model'] = m1_model.clone()
-                BB3_init_persona(st.session_state['m1_model'], st.session_state)
-            if m2_model_type == 'bb3' and 'm2_model' not in st.session_state:
-                print(f"Creating new m2 model agent for worker_id: {user_input}")
-                st.session_state['m2_model'] = m2_model.clone()
-                BB3_init_persona(st.session_state['m2_model'], st.session_state)
             st.experimental_rerun()
     elif authentication_status == None:
         st.warning('Please enter your username and password')
@@ -239,28 +231,10 @@ else:
                         next_speaker = models[0] if random.random() < 0.5 else models[1]
                     st.session_state.past.append(st.session_state['bot_generated'][next_speaker][-1]['text'])
 
-                    if m1_model_type == "bb3":
-                        new_response = st.session_state['bot_generated'][next_speaker][-1]['text']
-                        last_bb_response = st.session_state['bot_generated']['m1'][-1]
-                        agent = st.session_state.get('m1_model', m1_model)
-                        BB3_maybe_replace_last_response(model=agent, new_response=new_response, last_bb_response=last_bb_response)
-                    elif m2_model_type == "bb3":
-                        new_response = st.session_state['bot_generated'][next_speaker][-1]['text']
-                        last_bb_response = st.session_state['bot_generated']['m2'][-1]
-                        agent = st.session_state.get('m2_model', m2_model)
-                        BB3_maybe_replace_last_response(model=agent, new_response=new_response, last_bb_response=last_bb_response)
-
                     st.session_state['eval_mode'] = False
                     # TODO: do we add summary only once or for each model (m1/m2)?
-                    if m1_model_type == "gpt":
-                        st.session_state['summary'].extend(GPT_summary(m1_model, st.session_state))
-                    elif m2_model_type == "gpt":
-                        st.session_state['summary'].extend(GPT_summary(m2_model, st.session_state))
-                        
-                    if m1_model_type == "opt":
-                        st.session_state['summary_opt'].extend(OPT_summary(m1_model, st.session_state))
-                    elif m2_model_type == "opt":
-                        st.session_state['summary_opt'].extend(OPT_summary(m2_model, st.session_state)) 
+                    st.session_state['summary'].extend(OPT_summary(m1_model, st.session_state))
+                    st.session_state['summary_opt'].extend(OPT_summary(m2_model, st.session_state))
 
                     utils.upload_session(st.session_state, SESSION_DIR, FOLDER)
 

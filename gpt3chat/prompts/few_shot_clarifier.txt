@@ -1,0 +1,22 @@
+Rephrase [USER_TOKEN]'s question in third-person.
+
+Sarah: I've been working at the coffee shop for about six months.
+[USER_TOKEN]: I see. what did you do before that?
+# Specifically, What did Sarah do before working at a coffee shop for six months?#
+
+Ashley: Do you know who Ronaldo is?
+[USER_TOKEN]: I don't know, who is he?
+# Specifically, Who is Ronaldo?#
+
+Robert: Hey, how are you doing?
+[USER_TOKEN]: Good. What's your name? Do you know my name?
+# Specifically, What is Robert's name? Does Robert know [USER_TOKEN]'s name?#
+
+Jennifer: I like reading about history and science.
+[USER_TOKEN]: What kind of history? I like history too!
+# Specifically, What kind of history does Jennifer read about?#
+
+John: Hi! How are you doing today?
+[USER_TOKEN]: good. how about you
+# Specifically, How is John doing today?#
+

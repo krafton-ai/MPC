@@ -108,6 +108,19 @@ elif st.session_state['finish']:
 else:
     col1, col2 = st.columns([1,2])
     with col1:
+        RUBRIC = """
+        ### Evaluation Rubric
+
+        Read the following rubric carefully. Make sure to read the persona of the chatbot below.
+
+        1. **Not Sensible**: Does the response not make sense?
+        2. **Not Specific and Generic**: Is the response generic and not specific? For example, if you say “I love tennis” then “That’s nice” would be a non-specific response.
+        3. **Inconsistent Persona**: Is the response inconsistent with the information based on the persona list? Is it inconsistent with the context of the conversation?
+        4. **Particularly Engaging**: Are you particularly engaged by the response?
+        5. If none of the above apply, check **None of the above**.
+        """
+        st.markdown(RUBRIC)
+
         st.markdown(f"### Persona of {st.session_state['prompt_bot_token']}")
         for i in range(len(st.session_state['persona_summary'])):
             st.markdown(f"- {st.session_state['persona_summary'][i]}")
@@ -122,10 +135,10 @@ else:
         if not st.session_state['eval_mode']:
             with st.form('chat', clear_on_submit=True):
                 st.markdown(f"**Required:** Continue conversation for 20 turns. (Turns completed: {len(st.session_state['single/sensibleness']['m1'])})")
-                st.markdown("The response can take 5~10 seconds to load.")
-                st.markdown(":bulb: You can see the persona list on the left sidebar as well. (scroll down the sidebar)")
-                st.markdown(":bulb: If you don't like or have met an insulting message during the conversation, you can restart from the beginning if you reload the page. Or you can just change the topic.")
-                user_input = st.text_input('Type your message here (You are not Sarah!): ', '')
+                st.markdown(":bulb: You can check the instructions on the left sidebar. (Click '>' at the top left). The response can take 5~10 seconds to load.  Trivial messages will lead to a HIT rejection.")
+                if len(st.session_state['single/sensibleness']['m1']) == 0:
+                    st.markdown("Start the first turn with \"Hi!\"")
+                user_input = st.text_input('Type your message here: ', '')
                 submitted = st.form_submit_button('Send message')
             if submitted and user_input:
                 # Call model responses via API
@@ -162,51 +175,27 @@ else:
             # Evaluation form
             with st.form('eval', clear_on_submit=True):
                 st.markdown(f"**Required:** Continue for 20 turns. (Turns completed: {len(st.session_state['single/sensibleness']['m1'])})")
-                st.markdown(":bulb: You can see the persona list on the left sidebar as well. (scroll down the sidebar)")
+                st.markdown(f"Rate the chatbot's response by checking (or unchecking) boxes according to the rubric.")
 
-                st.markdown("""##### Sensible""")
-                st.markdown("Does the response make sense?")
-                sense_check = st.checkbox("Yes, it makes sense.")
-                nonsense_check = st.checkbox("No, it does not make sense.")
-                if not (sense_check ^ nonsense_check):
-                    sensibleness= None
-                elif sense_check and not nonsense_check:
-                    sensibleness = "Yes"
-                elif not sense_check and nonsense_check:
-                    sensibleness = "No"
+                nonsense_check = st.checkbox("Not Sensible")
+                unspecific_check = st.checkbox("Not Specific and Generic")
+                incons_check = st.checkbox("Inconsistent Persona")
+                engage_check = st.checkbox("Particularly Engaging")
+                none_above = st.checkbox("None of the above")
+
+                sensibleness = "No" if nonsense_check else "Yes"
+                specificity = "No" if unspecific_check else "Yes"
+                consistency = "No" if incons_check else "Yes"
+                engaging = "Yes" if engage_check else "No"
                 
-                st.markdown("""##### Consistency""")
-                st.markdown("""Is the response **consistent** with the information based on the **persona list** and **context** of the conversation?""")
-                conscheck = st.checkbox("Yes, it is consistent.")
-                nonconscheck = st.checkbox("No, it contradicts something.")
-                if not (conscheck ^ nonconscheck):
-                    consistency = None
-                elif conscheck and not nonconscheck:
-                    consistency = "Yes"
-                elif not conscheck and nonconscheck:
-                    consistency = "No"
-
-                st.markdown("""##### Engaging""")
-                st.markdown("""Are you engaged by the response? Do you want to continue the conversation?""")
-                engcheck = st.checkbox("Yes, it is engaging.")
-                nonengcheck = st.checkbox("No, it is not engaging.")
-                if not (engcheck ^ nonengcheck):
-                    engaging = None
-                elif engcheck and not nonengcheck:
-                    engaging = "Yes"
-                elif not engcheck and nonengcheck:
-                    engaging = "No"
-
                 submitted = st.form_submit_button("Submit evaluation")
-                if all(v is not None for v in [sensibleness, consistency, engaging]):
-                    allselected = True
-                else:
-                    allselected = False
-
-                if submitted and allselected:
+                checked = nonsense_check or unspecific_check or incons_check or engage_check
+                correct_eval = checked ^ none_above
+                if submitted and correct_eval:
                     # Store new evaluations into json file
                     st.session_state['single/consistency']['m1'].append(consistency)
                     st.session_state['single/sensibleness']['m1'].append(sensibleness)
+                    st.session_state['single/specificity']['m1'].append(specificity)
                     st.session_state['single/engagingness']['m1'].append(engaging)
                     
                     st.session_state.past.append(st.session_state['bot_generated']['m1'][-1]['text'])
@@ -221,5 +210,5 @@ else:
                             height=0
                         )
                     st.experimental_rerun()
-                elif submitted and not allselected:
-                    st.error("You should select for all questions and make sure you don't check 2 boxes for one question.")
+                elif submitted and not correct_eval:
+                    st.error("Please carefully re-read the instructions.")

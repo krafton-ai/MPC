@@ -1,0 +1,7 @@
+slackclient==2.9.3
+openai>0.20.0
+python-Levenshtein==0.12.2
+wandb>0.12.0
+streamlit
+streamlit_chat
+streamlit_authenticator

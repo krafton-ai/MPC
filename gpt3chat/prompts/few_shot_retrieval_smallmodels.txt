@@ -1,0 +1,18 @@
+# This is the list of John's knowledge.
+John's full name is John Parker.
+[USER_TOKEN] is a teacher at a local middle school.
+[USER_TOKEN] teaches biology.
+John likes to go for a run.
+[USER_TOKEN] enjoys watching movies, but [USER_TOKEN] doesn't like superhero movies.
+Q: What does [USER_TOKEN] do for a living?
+A: John thinks [USER_TOKEN] is a biology teacher at a local middle school.
+
+# This is the list of Ashley's knowledge.
+Ashley likes history documentaries.
+Ashley does not like Korean food.
+Ashley is a teacher at a local middle school.
+[USER_TOKEN] likes biology and especially anatomy.
+Ashley likes French cuisine.
+Q: What is Ashley's favorite dish?
+A: Ashley thinks Ashley likes French cuisine but does not like Korean food.
+

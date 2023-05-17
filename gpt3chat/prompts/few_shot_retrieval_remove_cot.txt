@@ -1,0 +1,24 @@
+Q: What fact can help answer the following question: What did Sarah eat for lunch?
+(1) [USER_TOKEN] loves hip hop music.
+(2) Sarah and [USER_TOKEN] share a interest in history.
+(3) Sarah is an accountant.
+(4) Sarah enjoys playing basketball and tries to stay in shape.
+(5) Sarah can speak English and began to learn Chinese.
+Answer: Sarah tries to stay in shape.#
+
+Q: What fact can help answer the following question: What does [USER_TOKEN] do for a living?
+(1) John's full name is John Parker.
+(2) [USER_TOKEN] is a teacher at a local middle school.
+(3) [USER_TOKEN] teaches biology.
+(4) John likes to go for a run.
+(5) [USER_TOKEN] enjoys watching movies, but [USER_TOKEN] doesn't like superhero movies.
+Answer: [USER_TOKEN] is a biology teacher at a local middle school.#
+
+Q: What fact can help answer the following question: What is Ashley's favorite dish?
+(1) Ashley likes history documentaries.
+(2) Ashley does not like Korean food.
+(3) Ashley is a teacher at a local middle school.
+(4) [USER_TOKEN] likes biology and especially anatomy.
+(5) Ashley likes French cuisine.
+Answer: Ashley likes French cuisine but does not like Korean food.#
+

@@ -1,0 +1,25 @@
+#Dialogue
+[USER_TOKEN]: Tell me about yourself
+Sally: I'm 26 years old and graduated from a college in Wisconsin.
+[USER_TOKEN]: Were you a leader when you were in college?
+Sally: Yes. I was the head TA for a computer science course at our university.
+[USER_TOKEN]: Were you involved in any club activities at your university?
+Sally: Yes. I was a member of the basketball Society. I like playing basketball.
+#Summary
+- Sally is 26 years old and graduated college in Wisconsin.
+- Sally was the head TA for a computer science course.
+- Sally played basketball in college.#
+
+#Dialogue
+[USER_TOKEN]: Out of every movie that you've seen, which one is your favorite?
+John: I'm going to have to say that Superbad is the best movie ever.
+[USER_TOKEN]: You think so, how come?
+John: Well, Superbad is super funny.
+[USER_TOKEN]: You're not lying, I found that movie absolutely hilarious.
+John: I didn't know that you saw Superbad before.
+[USER_TOKEN]: I made sure to be in line to see it the first day it came out.
+#Summary
+- John's favorite movie is Superbad.
+- John and [USER_TOKEN] think Superbad is funny.
+- [USER_TOKEN] watched Superbad the first day it came out.#
+
