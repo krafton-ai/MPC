@@ -55,14 +55,12 @@ The generated data is subject to the model owner's policy.
 [Prompted LLMs as Chatbot Modules for Long Open-domain Conversation]()  
 [[PDF](MPC_ver4.pdf)] [[Arxiv](https://arxiv.org/abs/2305.04533)]
 ```bibtex
-@inproceedings{lee2023prompted,
-  title={Prompted LLMs as Chatbot Modules for Long Open-domain Conversation},
-  author={Lee, Gibbeum and 
-  Hartmann, Volker and 
-  Park, Jongho and 
-  Papailiopoulos, Dimitris and
-  Lee, Kangwook},
-  booktitle={Findings of the Association for Computational Linguistics: ACL 2023},
-  year={2023}
+@misc{lee2023prompted,
+      title={Prompted LLMs as Chatbot Modules for Long Open-domain Conversation}, 
+      author={Gibbeum Lee and Volker Hartmann and Jongho Park and Dimitris Papailiopoulos and Kangwook Lee},
+      year={2023},
+      eprint={2305.04533},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 ```
