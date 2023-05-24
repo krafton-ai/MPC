@@ -1,13 +1,13 @@
 import os
 
 # Modify the two paths below
-HOME_PATH = "/home/user/openai-prompt/"
-FOLDER = "debug_gpt" # name of eval output directory
+HOME_PATH = "/home/jovyan/MPC/"
+FOLDER = "GPT4_mturk_batch1" # name of eval output directory
 
 CONFIG_PATH = os.path.join(HOME_PATH, "streamlit_eval/configs/")
 SESSION_DIR = os.path.join(HOME_PATH, "streamlit_eval/output")
 
-GPT_CONFIG_PATH = os.path.join(CONFIG_PATH, "gpt3chat_config.json")
+GPT_CONFIG_PATH = os.path.join(CONFIG_PATH, "ChatGPT_chat_config.json")
 OPT_CONFIG_PATH = os.path.join(CONFIG_PATH, "opt-30b_chat_config.json")
 OPT66_CONFIG_PATH = os.path.join(CONFIG_PATH, "opt-66b_chat_config.json")
 PLAIN_GPT_CONFIG_PATH = os.path.join(CONFIG_PATH, "plain_gpt3chat_config.json")
@@ -102,5 +102,5 @@ B: Fish cakes.
 
 CONSENT = """
 ### Consent
-By participating in the chat, you consent to the use of your chat history and evaluation data.
+By participating in the chat, you consent to the use of your chat history and evaluation data, and you agree to release KRAFTON from any liability on account of such use.
 """

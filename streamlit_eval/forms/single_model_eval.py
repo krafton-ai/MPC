@@ -122,7 +122,7 @@ else:
         if not st.session_state['eval_mode']:
             with st.form('chat', clear_on_submit=True):
                 st.markdown(f"**Required:** Continue conversation for 20 turns. (Turns completed: {len(st.session_state['single/sensibleness']['m1'])})")
-                st.markdown("The response can take 5~10 seconds to load.")
+                st.markdown(":warning: Please be patient. The response can take as much as 3 minutes to load.")
                 st.markdown(":bulb: You can see the persona list on the left sidebar as well. (scroll down the sidebar)")
                 st.markdown(":bulb: If you don't like or have met an insulting message during the conversation, you can restart from the beginning if you reload the page. Or you can just change the topic.")
                 user_input = st.text_input('Type your message here (You are not Sarah!): ', '')
