@@ -1,5 +1,5 @@
 {
-    "model": "gpt-3.5-turbo",
+    "model": "gpt-4",
     "chat_gpt": true,
     "main_language": "english",
     "prompt_bot_token": "Sarah",
@@ -169,7 +169,7 @@
     "dpr_topk": 5,
     "attach_gpt_retriever": "COT",
     "remove_cot": false,
-    "few_shot_retrieval": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_retrieval.txt",
-    "few_shot_clarifier": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_clarifier.txt",
-    "few_shot_summary": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_summary.txt"
+    "few_shot_retrieval": "/home/jovyan/MPC/gpt3chat/prompts/few_shot_retrieval.txt",
+    "few_shot_clarifier": "/home/jovyan/MPC/gpt3chat/prompts/few_shot_clarifier.txt",
+    "few_shot_summary": "/home/jovyan/MPC/gpt3chat/prompts/few_shot_summary.txt"
 }

@@ -228,8 +228,8 @@
         ]
     ],
     "remove_cot": true,
-    "few_shot_retrieval": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_retrieval.txt",
-    "few_shot_retrieval_remove_cot": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_retrieval_smallmodels.txt",
-    "few_shot_clarifier": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_clarifier.txt",
-    "few_shot_summary": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_summary.txt"
+    "few_shot_retrieval": "/home/user/MPC/gpt3chat/prompts/few_shot_retrieval.txt",
+    "few_shot_retrieval_remove_cot": "/home/user/MPC/gpt3chat/prompts/few_shot_retrieval_smallmodels.txt",
+    "few_shot_clarifier": "/home/user/MPC/gpt3chat/prompts/few_shot_clarifier.txt",
+    "few_shot_summary": "/home/user/MPC/gpt3chat/prompts/few_shot_summary.txt"
 }

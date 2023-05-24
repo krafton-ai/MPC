@@ -166,7 +166,7 @@
     "dpr_topk": 5,
     "attach_gpt_retriever": "COT",
     "remove_cot": false,
-    "few_shot_retrieval": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_retrieval.txt",
-    "few_shot_clarifier": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_clarifier.txt",
-    "few_shot_summary": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_summary.txt"
+    "few_shot_retrieval": "/home/user/MPC/gpt3chat/prompts/few_shot_retrieval.txt",
+    "few_shot_clarifier": "/home/user/MPC/gpt3chat/prompts/few_shot_clarifier.txt",
+    "few_shot_summary": "/home/user/MPC/gpt3chat/prompts/few_shot_summary.txt"
 }

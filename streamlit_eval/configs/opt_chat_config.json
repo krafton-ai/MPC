@@ -76,6 +76,6 @@
         "[BOT_TOKEN] learned to play the piano {but never really liked it,and is now part of a band}.",
         "[BOT_TOKEN] can speak English and began to learn {Spanish,Chinese,French,Korean}."
     ],
-    "few_shot_retrieval": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_retrieval.txt",
-    "few_shot_clarifier": "/home/user/openai-prompt/gpt3chat/prompts/few_shot_clarifier.txt"
+    "few_shot_retrieval": "/home/user/MPC/gpt3chat/prompts/few_shot_retrieval.txt",
+    "few_shot_clarifier": "/home/user/MPC/gpt3chat/prompts/few_shot_clarifier.txt"
 }
