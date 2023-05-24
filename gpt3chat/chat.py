@@ -21,8 +21,8 @@ except:
 
 # DEFAULTS
 QUESTION_PROB = 0.34
-openai.organization = None  # insert your openai api org here (if any)
-openai.api_key = None  # insert your openai api key here
+openai.organization = os.getenv("OPENAI_ORG")  # insert your openai api org here (if any)
+openai.api_key = os.getenv("OPENAI_API_KEY")  # insert your openai api key here
 
 class Chatbot:
     def __init__(self, bot_config_path: str = 'bot_config.json', debug: bool = False, persona: List[str] = [], bot_token: str = None, **kwargs):
@@ -36,14 +36,6 @@ class Chatbot:
 
         # memory retrieval module
         self.few_shot_prompt = {'clarifier': None, 'retrieval': None, 'summary': None}
-        for module in self.few_shot_prompt.keys():
-            if hasattr(self.config, f"few_shot_{module}"):
-                if module == 'retrieval' and self.config.remove_cot:
-                    with open(getattr(self.config, f"few_shot_{module}_remove_cot"), "r") as f:
-                        self.few_shot_prompt['retrieval'] = f.read().replace("[USER_TOKEN]", self.user_token)
-                else:
-                    with open(getattr(self.config, f"few_shot_{module}"), "r") as f:
-                        self.few_shot_prompt[module] = f.read().replace("[USER_TOKEN]", self.user_token)
                 
         
         self.initial_summaries = getattr(self.config, "persona_summary", [])
@@ -151,10 +143,12 @@ class Chatbot:
                 bot_response = bot_response.rsplit("(", maxsplit=1)[0]
             elif bot_response.endswith(")*") and "*(" in bot_response:
                 bot_response = bot_response.rsplit("*(", maxsplit=1)[0]
-#         # cut down to max number of sentences just in case
-#         if max_response_sents > 0:
-#             from nltk import tokenize
-#             bot_response = " ".join(tokenize.sent_tokenize(bot_response)[:max_response_sents])
+                
+        # cut down to max number of sentences just in case
+        # if max_response_sents > 0:
+        #     from nltk import tokenize
+        #     bot_response = " ".join(tokenize.sent_tokenize(bot_response)[:max_response_sents])
+
         # filter out too many questions and maybe truncate number of sents
         max_response_sents = getattr(self.config, "max_response_sents", -1)
         max_response_questions = getattr(self.config, "max_response_questions", -1)
@@ -257,9 +251,9 @@ class Chatbot:
             else:
                 if prompt_suffix.endswith("\n"):
                     prompt_suffix_clean = prompt_suffix.rstrip("\n")
-                    prompt_suffix = self.config.prompt_sep_token + prompt_suffix_clean + " End with a question." + "\n" + self.config.prompt_sep_token
+                    prompt_suffix = self.config.prompt_sep_token + prompt_suffix_clean + " Add a question." + "\n" + self.config.prompt_sep_token
                 else:
-                    prompt_suffix = self.config.prompt_sep_token + prompt_suffix + " End with a question." + self.config.prompt_sep_token
+                    prompt_suffix = self.config.prompt_sep_token + prompt_suffix + " Add a question." + self.config.prompt_sep_token
 
         # in case of suffix we might repeat the last turn to avoid repetition
         if suffix_added and self.config.repeat_turn_after_suffix:
@@ -278,7 +272,7 @@ class Chatbot:
         prefix_dialog = prefix_dialog.replace(fake_line_sep_token, self.config.line_sep_token)
 
         # Assemble context prefix + dialog + suffix
-        context = prefix_dialog + prompt_suffix if prompt_suffix is not None else prefix_dialog
+        context = prefix_dialog + "\n" + prompt_suffix if prompt_suffix is not None else prefix_dialog
         print(f"Input to model: {context}")
 
         return context, line_number, prefix_dialog, prompt_suffix
@@ -313,7 +307,7 @@ class Chatbot:
             retrieved_summ = self.memory_retriever.retrieve_top_summaries(
                 bot_response["clarifier_output"], history_summary, history_encodings, topk=self.config.dpr_topk
             )
-
+            summ = "\n" + "\n".join(retrieved_summ)
             # Memory Processor COT or UPR
             if self.config.attach_gpt_retriever == 'COT':
                 bot_response["retriever_input"], retrieved_summ = self.call_relevant_facts(bot_response["clarifier_output"], retrieved_summ)
@@ -329,6 +323,8 @@ class Chatbot:
                     api_route = self.hf_api_ip + "/ppl"
                     r = requests.post(api_route, json=ppl_kwargs)
                     bot_response["retriever_input"], retrieved_summ = r.json()['outputs']
+            else:
+                summ = ""
             bot_response["retriever_output"] = "\n".join(retrieved_summ) # it was " ".join before change
             print(f"Input summary: {bot_response['retriever_output']}")
 
@@ -339,10 +335,14 @@ class Chatbot:
                 else:
                     context = bot_response["retriever_output"] + getattr(self.config, "memory_sep_token", "\n\n") + context
             if getattr(self.config, "memory_module_persona", False):
-                context = f"The following are persona facts about {self.bot_token}.\n" + "\n".join(initial_summary) + \
+                # context = f"The following are persona facts about {self.bot_token}.\n" + "\n".join(initial_summary) + \
+                #     getattr(self.config, "memory_sep_token", "\n\n") + context
+                context = f"This is the information of {self.bot_token}.\n" + "\n".join(initial_summary) + \
                     getattr(self.config, "memory_sep_token", "\n\n") + context
             elif getattr(self.config, "memory_module_persona_nosep", False):
-                context = f"The following statements are true about {self.bot_token}.\n" + "\n".join(initial_summary) + "\n" + context
+                context = f"The following are persona facts about {self.bot_token}.\n" + "\n".join(initial_summary) + "\n" + context
+            else:
+                context = f"This is the information of {self.bot_token}." + summ + "\n" + context 
             print(f"Input to model (w/ memory): {context}")
         elif last_line_num > 2:
             # No memory module
@@ -370,17 +370,29 @@ class Chatbot:
 
         if self.hf_model_completion:
             completion = self._hf_completion(context, stop_token, module="response")
+        elif self.config.chat_gpt:
+            print(f"Calling {self.config.model}...")
+            completion = openai.ChatCompletion.create(
+                model = self.config.model,
+                messages = [{"role": "user", "content": context}],
+                max_tokens=self.config.max_completion_tokens,
+                temperature=self.config.temperature,
+                stop=stop_token,
+                n=1,
+                frequency_penalty=self.config.frequency_penalty,
+                presence_penalty=1.0,
+            )
         else:
             completion = openai.Completion.create(
                     model=self.config.model,
                     prompt=context,
                     max_tokens=self.config.max_completion_tokens,
                     temperature=self.config.temperature,
-                    stop=stop_token,
+                    # stop=stop_token,
                     n=1,
-                    frequency_penalty=self.config.frequency_penalty,
+                    # frequency_penalty=self.config.frequency_penalty,
                     logprobs=5,
-                    logit_bias=logit_bias,
+                    # logit_bias=logit_bias,
                 )
 
         if self.config.detect_repeat and last_line_num > 2:
@@ -405,6 +417,9 @@ class Chatbot:
             "utterance": None,
             "summary_input": None,
         }
+        user_name = user_name.split()[0] if user_name is not None else None
+        for i in range(len(history_summary)):
+            history_summary[i] = history_summary[i].replace("[USER_TOKEN]", user_name)
         self.bot_token = bot_token if bot_token is not None else self.config.prompt_bot_token
         self.config.prompt_prefix = prefix if prefix is not None else self.config.prompt_prefix
         self.config.prompt_suffix = suffix if suffix is not None else self.config.prompt_suffix
@@ -412,6 +427,18 @@ class Chatbot:
         is_real_response = False
         recent_summary = []
         recent_encodings = None
+
+        self.few_shot_prompt = {'clarifier': None, 'retrieval': None, 'summary': None}
+
+        for module in self.few_shot_prompt.keys():
+            if hasattr(self.config, f"few_shot_{module}"):
+                if module == 'retrieval' and self.config.remove_cot and self.few_shot_prompt['retrieval'] is None :
+                    with open(getattr(self.config, f"few_shot_{module}_remove_cot"), "r") as f:
+                        self.few_shot_prompt['retrieval'] = f.read().replace("[USER_TOKEN]", user_name)
+                elif self.few_shot_prompt[module] is None:
+                    with open(getattr(self.config, f"few_shot_{module}"), "r") as f:
+                        self.few_shot_prompt[module] = f.read().replace("[USER_TOKEN]", user_name)
+
 
         try:
             # get response from bot (API call)
@@ -497,11 +524,15 @@ class Chatbot:
         print(f"Repeated part of output: {completion_text[completion_text.find(rp):]}")
 
         if len(truncated_response) > 0:
-            completion['choices'][0]['text'] = truncated_response
+            if self.config.chat_gpt:
+                completion['choices'][0]['message']['content']  = truncated_response
+            else:
+                completion['choices'][0]['text'] = truncated_response
             return completion
 
         filler_words = ['So', 'Well', 'Oh', 'Ah', 'I', 'You', 'Maybe', 'You know']
-        if not self.hf_model_completion:
+        # filler_words = ['흠', '어...', '아,', '나', '너', '아마', '아니 근데']
+        if not self.hf_model_completion and not self.config.chat_gpt:
             log_probs = completion['choices'][0]['logprobs']
             phrase_indices = [0] + [(i+1) for i, tok in enumerate(log_probs['tokens']) if tok in [';','.','?','!']]
             original_token = log_probs['tokens'][phrase_indices[idx]]
@@ -512,12 +543,15 @@ class Chatbot:
             
         lead_word = random.choice(all_candidates)
         if lead_word == "<|endoftext|>":
-            completion['choices'][0]['text'] = "End of text error!"
+            if self.config.chat_gpt:
+                completion['choices'][0]['message']['content']  = "End of text error!"
+            else:
+                completion['choices'][0]['text'] = "End of text error!"
             return completion
 
         if getattr(self.config, "hf_model_name", None) and "opt" in self.config.hf_model_name :
             ctxt = context + " " + lead_word
-        elif  getattr(self.config, "model", None) and self.config.model == "davinci":
+        elif  getattr(self.config, "model", None) and self.config.model == "davinci" or self.config.model=="text-davinci-002":
             ctxt = context + " " + lead_word
         else:
             ctxt = prefix_dialog + self.config.line_sep_token + f"{self.bot_token}: " + lead_word
@@ -525,6 +559,18 @@ class Chatbot:
 
         if self.hf_model_completion:
             completion = self._hf_completion(ctxt, stop_token, frequency_penalty=1.15, module="response")
+        elif self.config.chat_gpt:
+            completion = openai.ChatCompletion.create(
+                model = self.config.model,
+                messages = [{"role": "user", "content": ctxt}],
+                max_tokens=self.config.max_completion_tokens,
+                temperature=0.7,
+                stop=stop_token,
+                n=1,
+                frequency_penalty=self.config.frequency_penalty,
+                presence_penalty=1.0,
+                logit_bias={"198": -100},
+            )
         else:
             completion = openai.Completion.create(
                 model=self.config.model,
@@ -537,7 +583,10 @@ class Chatbot:
                 presence_penalty=1.0,
                 logit_bias={"198": -100},
             )
-        completion['choices'][0]['text'] = truncated_response + lead_word + ' ' + completion['choices'][0]['text']
+        if self.config.chat_gpt:
+            completion['choices'][0]['message']['content'] = truncated_response + lead_word + ' ' + completion['choices'][0]['message']['content'] 
+        else:
+            completion['choices'][0]['text'] = truncated_response + lead_word + ' ' + completion['choices'][0]['text']
 
         return completion
 
@@ -555,10 +604,28 @@ class Chatbot:
         # original_question = lines[-1][lines[-1].find(":")+1:].strip()
 
         # Clarify question
-        input_text = self.few_shot_prompt['clarifier'] + context_only + '\n# Specifically,'
+        if self.config.main_language == "english":
+            input_text = self.few_shot_prompt['clarifier'] + context_only + '\n# Specifically,'
+            message_dict = [{"role": "user", "content": input_text}]
+        elif self.config.main_language == "korean":
+            input_text = self.few_shot_prompt['clarifier'] + context_only + f'\n=>{self.user_token}:'
+            message_dict = [{"role": "user", "content": input_text}]
+            system_text = f"You need to translate {self.user_token}'s turn only.\nDo not translate {self.bot_token}'s turn."
+            message_dict.append({"role": "system", "content": system_text})
         print(f"Clarified input: {input_text}")
         if self.hf_model_completion:
             completion = self._hf_completion(input_text, module="clarifier")
+        elif self.config.chat_gpt:
+            completion = openai.ChatCompletion.create(
+                model = self.config.model,
+                messages = message_dict,
+                max_tokens=32,
+                temperature=0.3,
+                frequency_penalty=0.3,
+                n=1,
+                logit_bias={"198": -100},
+            )
+            third_person_question = [choice['message']['content'] for choice in completion['choices']][0].strip().strip('\n').split('\n')[0]
         else:
             completion = openai.Completion.create(
                     model=self.config.model,
@@ -569,7 +636,7 @@ class Chatbot:
                     n=1,
                     logit_bias={"198": -100},
                 )
-        third_person_question = [choice['text'] for choice in completion['choices']][0].strip().strip('\n').split('\n')[0]
+            third_person_question = [choice['text'] for choice in completion['choices']][0].strip().strip('\n').split('\n')[0]
         third_person_question = third_person_question[:third_person_question.find('#')]  + ' '
         print(f"#1 Clarifier output: {third_person_question}")
         return input_text, third_person_question
@@ -591,17 +658,30 @@ class Chatbot:
 
         if self.hf_model_completion:
             completion = self._hf_completion(input_text, module="memory_reasoning")
+        elif self.config.chat_gpt:
+            completion = openai.ChatCompletion.create(
+                model = self.config.model,
+                messages = [{"role": "user", "content": input_text}],
+                max_tokens=196,
+                temperature=0.3,
+                frequency_penalty=0.3,
+                n=1,
+                logit_bias={"198": -100},
+            )
+            completion_text = [choice['message']['content'] for choice in completion['choices']][0].strip().strip('\n').strip("#")
+
         else:
             completion = openai.Completion.create(
                     model=self.config.model,
                     prompt=input_text,
-                    max_tokens=128,
+                    max_tokens=196,
                     temperature=0.3,
                     frequency_penalty=0.3,
                     n=1,
                     logit_bias={"198": -100},
                 )
-        completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip('\n').strip("#")
+            completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip('\n').strip("#")
+        print('comp text 1: ', completion_text)
         # in some cases stop token does not work, so we remove everything after first line
         if self.config.remove_cot:
             retrieved = completion_text.split("\n")[0].strip()
@@ -611,6 +691,17 @@ class Chatbot:
             answer = input_text + completion_text.split('\n')[0] + f"\nAnswer: {self.bot_token} thinks"
             if self.hf_model_completion:
                 completion = self._hf_completion(answer, stop_token='#', module="memory_selector")
+            elif self.config.chat_gpt:
+                completion = openai.ChatCompletion.create(
+                    model = self.config.model,
+                    messages = [{"role": "user", "content": answer}],
+                    max_tokens=32,
+                    temperature=0.3,
+                    frequency_penalty=0.3,
+                    n=1,
+                    logit_bias={"198": -100},
+                )
+                completion_text = [choice['message']['content'] for choice in completion['choices']][0].strip().strip('\n')
             else:
                 completion = openai.Completion.create(
                         model=self.config.model,
@@ -621,7 +712,7 @@ class Chatbot:
                         n=1,
                         logit_bias={"198": -100},
                     )
-            completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip('\n')
+                completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip('\n')
             retrieved = completion_text.split("\n")[0].strip()
         if getattr(self.config, "hf_model_name", None) and ("opt" in self.config.hf_model_name or "GPT-JT" in self.config.hf_model_name): 
             retrieved = retrieved
@@ -652,6 +743,16 @@ class Chatbot:
                                             #stop_token='#', 
                                             module="memory_summarizer"
                                             )
+        elif self.config.chat_gpt:
+            completion = openai.ChatCompletion.create(
+                model = self.config.model,
+                messages = [{"role": "user", "content": input_text}],
+                max_tokens=128,
+                temperature=0.3,
+                n=1
+            )
+            completion_text = [choice['message']['content'] for choice in completion['choices']][0].strip().strip("\n")
+
         else:
             completion = openai.Completion.create(
                 model=self.config.model,
@@ -660,7 +761,7 @@ class Chatbot:
                 temperature=0.3,
                 n=1
             )
-        completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip("\n")
+            completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip("\n")
         print(f"Summary output: {completion_text}")
         summaries = []
         for s in completion_text.split('-'):

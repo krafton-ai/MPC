@@ -9,8 +9,8 @@ from typing import List
 DEFAULT_NAME = "chatbot"
 
 # OpenAI defaults (you can change params in chatbot_config.json)
-OPENAI_MODEL = 'text-davinci-002'
-OPENAI_MAX_COMPLETION_TOKENS = 96
+OPENAI_MODEL = 'text-davinci-003'
+OPENAI_MAX_COMPLETION_TOKENS = 256
 OPENAI_TEMPERATURE = 0.7
 OPENAI_FREQUENCY_PENALTY = 0.0
 OPENAI_PROMPT_SUFFIX = None
@@ -50,6 +50,7 @@ class BotConfig:
         self.summary_every_n_turns = 6 # 15tokens/turn x 6 turns x 2
         self.remove_cot = False
         self.persona_prefix = False
+        self.main_language = "english"
 
         if bot_config_path is not None:
             self._init_from_json(bot_config_path)
@@ -198,7 +199,10 @@ def close_match(src_list, target, threshold=0.75, min_len=3):
 
 # Extract completion text from openai return
 def extract_text(completion):
-    completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip("\n")
+    if 'text' in completion['choices'][0]:
+        completion_text = [choice['text'] for choice in completion['choices']][0].strip().strip("\n")
+    elif 'message' in completion['choices'][0]:
+        completion_text = [choice['message']['content'] for choice in completion['choices']][0].strip().strip("\n")
     return completion_text.split("\n")[0]
 
 # Choose delimited part randomly from a string

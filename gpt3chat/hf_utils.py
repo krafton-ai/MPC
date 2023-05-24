@@ -5,7 +5,7 @@ import time
 import torch
 from typing import List, Dict
 
-from transformers.generation_stopping_criteria import StoppingCriteria, StoppingCriteriaList, STOPPING_CRITERIA_INPUTS_DOCSTRING
+from transformers.generation.stopping_criteria import StoppingCriteria, StoppingCriteriaList, STOPPING_CRITERIA_INPUTS_DOCSTRING
 from transformers.utils import add_start_docstrings
 from gpt3chat.utils import UPR_ppl
 
@@ -254,13 +254,14 @@ class InferenceModel:
                     input_ids = inputs["input_ids"].to(self.hf_model.device)
                     attn_mask = inputs["attention_mask"].to(self.hf_model.device)
                     decoder_input_ids = decoder_input_ids.to(self.hf_model.device)
-                # self.stop_criterias[0].set_start_length(input_len)
+                self.stop_criterias[0].set_start_length(input_len)
                 # self.stop_criterias[0].set_stop_pattern_dict({f"{self.user_token}:": 0.7})
                 output = self.hf_model.generate(input_ids, 
                                                 attention_mask=attn_mask, 
                                                 decoder_input_ids=decoder_input_ids,
                                                 output_scores=True, 
-                                                return_dict_in_generate=True, # stopping_criteria=stop_criterias, 
+                                                return_dict_in_generate=True, 
+                                                stopping_criteria=stop_criterias, 
                                                 **generation_kwargs)
             else:
                 inputs = self.hf_tokenizer(context, return_tensors="pt")
