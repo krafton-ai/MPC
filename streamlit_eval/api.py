@@ -12,35 +12,35 @@ model_opt = None
 model_alt_opt = None
 model_bb3 = None
 
-@st.cache(allow_output_mutation=True, show_spinner=False)
-def load_model_gpt(config_path, session_state):
+@st.cache_resource(show_spinner=False)
+def load_model_gpt(config_path, _session_state):
     global model_gpt
     if model_gpt is None:
-        model_gpt = Chatbot(config_path, persona=session_state['persona_summary'], bot_token=session_state['prompt_bot_token'])
+        model_gpt = Chatbot(config_path, persona=_session_state['persona_summary'], bot_token=_session_state['prompt_bot_token'])
     return model_gpt
 
-@st.cache(allow_output_mutation=True, show_spinner=False)
-def load_model_alt_gpt(config_path, session_state):
+@st.cache_resource(show_spinner=False)
+def load_model_alt_gpt(config_path, _session_state):
     global model_alt_gpt
     if model_alt_gpt is None:
-        model_alt_gpt = Chatbot(config_path, persona=session_state['persona_summary'], bot_token=session_state['prompt_bot_token'])
+        model_alt_gpt = Chatbot(config_path, persona=_session_state['persona_summary'], bot_token=_session_state['prompt_bot_token'])
     return model_alt_gpt
 
-@st.cache(allow_output_mutation=True, show_spinner=False)
-def load_model_opt(config_path, session_state):
+@st.cache_resource(show_spinner=False)
+def load_model_opt(config_path, _session_state):
     global model_opt
     if model_opt is None:
-        model_opt = Chatbot(config_path, persona=session_state['persona_summary'], bot_token=session_state['prompt_bot_token'])
+        model_opt = Chatbot(config_path, persona=_session_state['persona_summary'], bot_token=_session_state['prompt_bot_token'])
     return model_opt
 
-@st.cache(allow_output_mutation=True, show_spinner=False)
-def load_model_alt_opt(config_path, session_state):
+@st.cache_resource(show_spinner=False)
+def load_model_alt_opt(config_path, _session_state):
     global model_alt_opt
     if model_alt_opt is None:
-        model_alt_opt = Chatbot(config_path, persona=session_state['persona_summary'], bot_token=session_state['prompt_bot_token'])
+        model_alt_opt = Chatbot(config_path, persona=_session_state['persona_summary'], bot_token=_session_state['prompt_bot_token'])
     return model_alt_opt
 
-@st.cache(allow_output_mutation=True, show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def load_model_bb3(config_path):
     global model_bb3
     if model_bb3 is None:
